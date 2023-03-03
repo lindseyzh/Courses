@@ -1,0 +1,6 @@
+﻿  ATAXX.cpp
+C:\Users\zlx\source\repos\ATAXX\ATAXX\ATAXX.cpp(60,38): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+C:\Users\zlx\source\repos\ATAXX\ATAXX\ATAXX.cpp(72,7): warning C4101: “ord”: 未引用的局部变量
+C:\Users\zlx\source\repos\ATAXX\ATAXX\ATAXX.cpp(72,13): warning C4101: “j”: 未引用的局部变量
+C:\Users\zlx\source\repos\ATAXX\ATAXX\ATAXX.cpp(72,11): warning C4101: “i”: 未引用的局部变量
+  ATAXX.vcxproj -> C:\Users\zlx\source\repos\ATAXX\Debug\ATAXX.exe
