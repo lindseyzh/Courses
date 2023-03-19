@@ -1,0 +1,44 @@
+# Name: Zhang Lingxin
+# ID:   2100013018
+
+
+# Intializaion
+.pos 0 
+	irmovq  stack, %rsp  	# stack pointer intialization
+	call    main		    # begin
+	halt			        # end
+
+
+# linked list
+.align 8
+ele1:
+        .quad 0x00a
+        .quad ele2
+ele2:
+        .quad 0x0b0
+        .quad ele3
+ele3:
+        .quad 0xc00
+        .quad 0
+
+
+main:
+    irmovq  ele1,%rdi
+    call    sum_list
+    ret
+
+sum_list:
+    irmovq  $0,%rax
+    jmp     L2
+L1:
+    mrmovq  (%rdi),%rdx
+    addq    %rdx,%rax
+    mrmovq  8(%rdi),%rdi
+L2:
+    andq    %rdi,%rdi
+    jne     L1
+    ret
+
+
+.pos 0x2000
+stack:

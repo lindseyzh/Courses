@@ -1,0 +1,206 @@
+#/* $begin ncopy-ys */
+
+##################################################################
+# ncopy.ys - Copy a src block of len words to dst.
+# Return the number of positive words (>0) contained in src.
+#
+# Include your name and ID here.
+# Name: Zhang Lingxin
+# ID:   2100013018
+# 
+# Describe how and why you modified the baseline code.
+# 1. Loop unrolling, loop index increased by 10 on each iteration
+# 2. For remaining loops, jump with a ternary-tree structrue
+# 3. Adjust the order of instructions over and over again..........
+##################################################################
+# Do not modify this portion
+# Function prologue.
+# %rdi = src, %rsi = dst, %rdx = len
+ncopy:
+
+##################################################################
+# You can modify this portion
+
+# note: No need for more registers in the loop,
+#       for there're only 2 load units
+
+
+	# Loop header
+	iaddq   $-10,%rdx		# len -= 10
+	jl      L2		    # if len<0, goto L2
+	#mrmovq  (%rdi), %r10	# next src
+
+L1:	
+	mrmovq  (%rdi), %r10	# next src
+    mrmovq  8(%rdi), %r11  # next src
+    rmmovq  %r10, (%rsi)	#
+	andq    %r10, %r10		# val <= 0?
+	jle     Npos9   	    # if so, goto Npos:
+	iaddq   $1, %rax		# count++
+Npos9:	
+
+	rmmovq  %r11, 8(%rsi)	# 
+    mrmovq  16(%rdi), %r12	# next src
+	andq    %r11, %r11		# val <= 0?
+	jle     Npos8     	    # if so, goto Npos:
+	iaddq   $1, %rax		# count++
+Npos8:	
+
+	rmmovq  %r12, 16(%rsi)	# 
+    mrmovq  24(%rdi), %r13	# next src
+	andq    %r12, %r12  	# val <= 0?
+	jle     Npos7   	    # if so, goto Npos:
+	iaddq   $1, %rax		# count++
+Npos7:	
+
+	rmmovq  %r13, 24(%rsi)	# 
+    mrmovq  32(%rdi), %r14	# next src
+	andq    %r13, %r13		# val <= 0?
+	jle     Npos6   	    # if so, goto Npos:
+	iaddq   $1, %rax		# count++
+Npos6:	
+
+	rmmovq  %r14, 32(%rsi)	# 
+    mrmovq  40(%rdi), %rbx	# next src
+	andq    %r14, %r14		# val <= 0?
+	jle     Npos5     	    # if so, goto Npos:
+	iaddq   $1, %rax		# count++
+Npos5:
+
+	rmmovq  %rbx, 40(%rsi)	# 
+    mrmovq  48(%rdi), %rcx	# next src
+	andq    %rbx, %rbx		# val <= 0?
+	jle     Npos4   	    # if so, goto Npos:
+	iaddq   $1, %rax		# count++
+Npos4:	
+
+	rmmovq  %rcx, 48(%rsi)	# 
+    mrmovq  56(%rdi), %rbp	# next src
+	andq    %rcx, %rcx		# val <= 0?
+	jle     Npos3      	    # if so, goto Npos:
+	iaddq   $1, %rax		# count++
+Npos3:	
+
+	rmmovq  %rbp, 56(%rsi)	# 
+    mrmovq  64(%rdi), %r8	# next src
+	andq    %rbp, %rbp		# val <= 0?
+	jle     Npos2    	    # if so, goto Npos:
+	iaddq   $1, %rax		# count++
+Npos2:	
+
+	rmmovq  %r8, 64(%rsi)	
+    mrmovq  72(%rdi), %r9 	# next src
+	andq    %r8, %r8		# val <= 0?
+	jle     Npos1    	    # if so, goto Npos:
+	iaddq   $1, %rax		# count++
+Npos1:	
+
+	rmmovq  %r9, 72(%rsi)	    # 
+	andq    %r9,%r9 		# val <= 0?
+	jle     Npos0    	    # if so, goto Npos:
+	iaddq   $1, %rax		# count++
+Npos0:	
+    
+    #mrmovq  80(%rdi), %r10	# next src
+	iaddq   $80,%rdi		# src+=10
+	iaddq   $80,%rsi		# dst+=10
+    iaddq   $-10,%rdx		# len-=10	
+	jge     L1			    # if len>=0, goto L1
+
+L2:
+    iaddq   $7,%rdx
+    jl      t012
+    jg      t456789 
+    je      t3
+t012:
+    iaddq   $2,%rdx
+    je      t1
+    iaddq   $-1,%rdx
+    je      t2
+    ret
+t456789:
+    iaddq   $-3,%rdx
+    jg      t789
+    je      t6
+#   jl      t45
+#t45:
+    iaddq   $1,%rdx
+    je      t5
+    jmp     t4
+t789:
+    iaddq   $-2,%rdx
+    jl      t7
+    je      t8
+#   jmp     t9
+#t9:
+    mrmovq  64(%rdi),%r12  
+    rmmovq  %r12,64(%rsi)
+    andq    %r12,%r12
+t8:
+    mrmovq  56(%rdi),%r11  
+    jle     t80
+    iaddq   $1,%rax
+t80:
+    rmmovq  %r11,56(%rsi)      
+    andq    %r11,%r11
+t7:
+    mrmovq  48(%rdi),%r10  
+    jle     t70
+    iaddq   $1,%rax 
+t70:
+    rmmovq  %r10,48(%rsi)
+    andq    %r10,%r10
+t6:
+    mrmovq  40(%rdi),%r9 
+    jle     t60
+    iaddq   $1,%rax
+t60: 
+    rmmovq  %r9,40(%rsi)
+    andq    %r9,%r9
+t5:
+    mrmovq  32(%rdi),%r8 
+    jle     t50
+    iaddq   $1,%rax
+t50:
+    rmmovq  %r8,32(%rsi)
+    andq    %r8,%r8
+t4:
+    mrmovq  24(%rdi),%r13  
+    jle     t40
+    iaddq   $1,%rax
+t40:
+    rmmovq  %r13,24(%rsi)
+    andq    %r13,%r13
+t3:
+    mrmovq  16(%rdi),%r12  
+    jle     t30
+    iaddq   $1,%rax  
+t30:
+    rmmovq  %r12,16(%rsi)
+    andq    %r12,%r12
+t2:
+    mrmovq  8(%rdi),%r11 
+    jle     t20
+    iaddq   $1,%rax
+t20: 
+    rmmovq  %r11,8(%rsi)  
+    andq    %r11,%r11
+t1:
+    mrmovq  (%rdi),%r10
+    jle     t10
+    iaddq   $1,%rax 
+t10:
+    rmmovq  %r10,(%rsi)
+    andq    %r10,%r10
+    jle     Done
+    iaddq   $1,%rax
+
+##################################################################
+# Do not modify the following section of code
+# Function epilogue.
+Done:
+	ret
+##################################################################
+# Keep the following label at the end of your function
+End:
+#/* $end ncopy-ys */
